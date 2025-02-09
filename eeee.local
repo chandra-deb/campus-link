@@ -1,0 +1,9 @@
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YXBwYXJlbnQtbGFkeWJ1Zy00MS5jbGVyay5hY2NvdW50cy5kZXYk
+CLERK_SECRET_KEY=sk_test_Wb23NZRGggRCBGAVjQ0z03Boqmm8yVI7Bt4EwVmpq8
+
+# !IMPORTANT: If you don't put '/' in the beginning of the path, it will
+# !IMPORTANT: behave weirdly. For example if you go try to go to /auth/sign-in
+# !IMPORTANT: from clerk auth page, it will redirect you to /auth/auth/sign-in
+# !IMPORTANT: instead of /auth/sign-in. Same goes for other paths. Vice-versa.
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/sign-up

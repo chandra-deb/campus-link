@@ -3,13 +3,13 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher(['/profile(.*)', ])
 
-// * This way of protecting routes is a disaster, It goes in to infinite loop.
+// ! This way of protecting routes is a disaster, It goes in to infinite loop.
 // const isPublicRoute = createRouteMatcher(['auth/sign-in', '/auth/sign-up'])
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect();
 
-// Including this line
+// ! Including this line
 // if (!isPublicRoute(req)) await auth.protect();
 
 })

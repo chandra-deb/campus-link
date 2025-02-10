@@ -13,6 +13,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType {
+  EXPERT
+  STUDENT
+}
 
 model Post {
   id        Int      @id @default(autoincrement())
@@ -33,9 +37,91 @@ model Profile {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  name             String?
+  userType         UserType
+  posts            Post[]
+  profile          Profile?
+  categories       UserCategory[]
+  skills           UserSkill[]
+  studentBookings  Booking[] @relation("StudentBookings")
+  expertBookings   Booking[] @relation("ExpertBookings")
+}
+
+model Category {
+  id          Int            @id @default(autoincrement())
+  name        String         @unique
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  users       UserCategory[]
+  skills      Skill[]
+}
+
+model UserCategory {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, categoryId])
+}
+
+model Skill {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  users       UserSkill[]
+}
+
+model UserSkill {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  skill     Skill    @relation(fields: [skillId], references: [id])
+  skillId   Int
+  level     Int      @default(1)
+  isPaid    Boolean  @default(false)
+  price     Float?
+  createdAt DateTime @default(now())
+
+  bookings  Booking[]
+
+  @@unique([userId, skillId])
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  student       User          @relation("StudentBookings", fields: [studentId], references: [id])
+  studentId     Int
+  expert        User          @relation("ExpertBookings", fields: [expertId], references: [id])
+  expertId      Int
+  userSkill     UserSkill     @relation(fields: [userSkillId], references: [id])
+  userSkillId   Int
+  date          DateTime
+  status        BookingStatus @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  CANCELLED
 }
